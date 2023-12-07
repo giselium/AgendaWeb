@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <style>
+        h2{
+            margin-top: 10px;
+        }
+
+        .activity{
+            width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4">
+                <form>
+                    <div class="form-group mb-3 mt-3">
+                        <label>Aktivitas</label>
+                        <input class="form-control"type="text" id="aktivitas"placeholder="Contoh: Kelas Tekweb/Kelas SD">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Jam Mulai:</label>
+                        <input type="time" class="form-control" id="start">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Jam Selesai:</label>
+                        <input type="time" class="form-control" id="end">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" value="pribadi" id="pribadi" name="flexRadioDefault">
+                        <label class="form-check-label" for="flexRadioDefault1">Pribadi</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" value="kuliah"
+                        id="kuliah" checked>
+                        <label class="form-check-label mb-3" for="flexRadioDefault2">Kuliah</label>
+                    </div>
+                    <button class="btn btn-primary">Simpan Jadwal</button>
+                </form>
+            </div>
+            <div class="col-7">
+                <div class="row">
+                    <div class="col-12">
+                        <h2>Agenda Kuliah</h2>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th class="activity">Aktivitas</th>
+                                    <th>Jam Mulai:</th>
+                                    <th>Jam Selesai:</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tabelKuliah">
+        
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <h2>Agenda Pribadi</h2>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th class="activity">Aktivitas</th>
+                                    <th>Jam Mulai:</th>
+                                    <th>Jam Selesai:</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tabelPribadi">
+        
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    let form = document.querySelector("form");
+    let activitiesPribadi = [];
+    let activitiesKuliah = [];
+    let tablePribadi = document.querySelector(".tabelPribadi");
+    let tableKuliah = document.querySelector(".tabelKuliah");
+   
+
+    let deleteItemKuliah = (index) => {
+      activitiesKuliah.splice(index, 1);
+      renderActivities();
+    };
+
+    let deleteItemPribadi = (index) => {
+      activitiesPribadi.splice(index, 1);
+      renderActivities();
+    };
+
+    let renderActivities = () => {
+        let strResult1 = "";
+        let strResult2 = "";
+        activitiesKuliah.forEach((elm, i) => {
+            strResult1 += "<tr>" +
+                "<td> <button onclick='deleteItemKuliah(" + i +")'>x</button> </td>" +
+                "<td>" + elm.aktivitas +  "</td>" + 
+                "<td>" + elm.start + "</td>" +
+                "<td>" + elm.end + "</td>";
+        });
+        tableKuliah.innerHTML = strResult1;
+
+        activitiesPribadi.forEach((elm, i) => {
+            strResult2 += "<tr>" +
+                "<td> <button onclick='deleteItemPribadi(" + i +")'>x</button> </td>" +
+                "<td>" + elm.aktivitas +  "</td>" + 
+                "<td>" + elm.start + "</td>" +
+                "<td>" + elm.end + "</td>";
+        });
+        tablePribadi.innerHTML = strResult2;
+    };
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        let aktivitas = document.querySelector("#aktivitas").value;
+        let start = document.querySelector("#start").value;
+        let end = document.querySelector("#end").value;
+        let pribadi = document.querySelector("#pribadi");
+        let kuliah = document.querySelector("#kuliah");
+
+        let found = false;
+        if(kuliah.checked){
+            activitiesKuliah.forEach((elm, i) => {
+            if(start >= elm.start && start <= elm.end || end >= elm.start && end <= elm.end){
+                alert("Jadwal sudah terisi");
+                found = true;
+            }
+        });
+        }
+       
+        if (pribadi.checked){
+            activitiesPribadi.forEach((elm, i) => {
+            if(start >= elm.start && start <= elm.end || end >= elm.start && end <= elm.end){
+                alert("Jadwal sudah terisi");
+                found = true;
+            }
+        });
+        }
+        
+        if(!found){
+            if (kuliah.checked){
+                if(aktivitas != "" && start != "" && end != ""){
+                    activitiesKuliah.push({
+                    aktivitas: aktivitas,
+                    start: start,
+                    end: end,
+                });               
+                }else {
+                    alert("Mohon masukkan data");
+                }
+            }else if(pribadi.checked){
+                if(aktivitas != "" && start != "" && end != ""){
+                    activitiesPribadi.push({
+                    aktivitas: aktivitas,
+                    start: start,
+                    end: end,
+                });
+                }else {
+                    alert("Mohon masukkan data");
+                }
+            }
+        };
+        activitiesKuliah.sort(function(a, b){
+            if (a.start < b.start){
+                return -1;
+            }
+            if (a.start > b.start){
+                return 1;
+            }
+            return 0;
+        });
+
+        activitiesPribadi.sort(function(a, b){
+            if (a.start < b.start){
+                return -1;
+            }
+            if (a.start > b.start){
+                return 1;
+            }
+            return 0;
+        });
+
+        renderActivities();
+        form.reset();
+        console.log(activitiesKuliah);
+        console.log(activitiesPribadi);
+        return false;
+    });
+</script>
+</html>
